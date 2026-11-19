@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f6f7f2">
+    <title>Recifix Admin - Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/api.js" defer></script>
+    <script src="js/admin.js" defer></script>
+</head>
+<body>
+    <div class="admin-shell">
+        <aside class="sidebar">
+            <a class="brand" href="admin.html" aria-label="Recifix admin home">
+                <span class="brand-mark"><img src="images/icons/leave-logo-dashboard.svg" alt=""></span>
+                <span class="brand-copy"><strong>Recifix</strong><small>ADMIN CONSOLE</small></span>
+            </a>
+            <div class="workspace-label">WORKSPACE</div>
+            <nav class="side-nav" aria-label="Admin navigation">
+                <a class="side-link" href="admin.html"><span class="nav-icon" aria-hidden="true">⌂</span>Overview</a>
+                <a class="side-link" href="admin-members.html"><span class="nav-icon" aria-hidden="true">♙</span>Members<span class="nav-count">...</span></a>
+                <a class="side-link" href="admin-messages.html"><span class="nav-icon" aria-hidden="true">✉</span>Messages<span class="nav-dot" aria-label="Unread messages" hidden></span></a>
+                <a class="side-link" href="admin-recipes.html"><span class="nav-icon" aria-hidden="true">▤</span>Recipes</a>
+                <a class="side-link active" href="admin-settings.html"><span class="nav-icon" aria-hidden="true">⚙</span>Account Settings</a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="sidebar-admin">
+                    <span class="avatar avatar-small" id="adminAvatar">A</span>
+                    <span><strong id="adminName">Admin</strong><small id="adminRole">Administrator</small></span>
+                    <span class="online-dot" aria-label="Online"></span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong>Account Settings</strong></div>
+                <div class="topbar-actions">
+                    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+                        <span aria-hidden="true"><img src="images/icons/lightmode.svg" alt=""></span>
+                    </button>
+                    <div class="account-wrap" aria-label="Administrator account">
+                        <div class="account-button">
+                            <span class="avatar">A</span>
+                            <span class="account-copy"><strong id="topAdminName">Admin</strong><small>Admin</small></span>
+                            <span class="chevron" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <section class="content-panel settings-panel">
+                    <div class="panel-heading">
+                        <div><p class="section-kicker">YOUR PROFILE</p><h2>Account Settings</h2><p class="panel-description">Manage your profile and account security.</p></div>
+                    </div>
+                    <section class="settings-section">
+                        <p class="section-kicker">PROFILE INFORMATION</p>
+                        <h3>Personal details</h3>
+                        <form id="accountSettingsForm" class="settings-form">
+                            <label class="settings-field">Full name<input type="text" id="adminProfileName" name="name" maxlength="100" autocomplete="name" required></label>
+                            <label class="settings-field">Email address<input type="email" id="adminProfileEmail" name="email" maxlength="254" autocomplete="email" required></label>
+                            <div class="settings-form-footer"><span id="profileSettingsStatus" role="status" aria-live="polite"></span><button type="submit" class="settings-save-button">Save profile</button></div>
+                        </form>
+                    </section>
+                    <section class="settings-section">
+                        <p class="section-kicker">PASSWORD</p>
+                        <h3>Change password</h3>
+                        <p class="panel-description">Update the password you use to sign in to your account.</p>
+                        <form id="settingsPasswordForm" class="settings-form settings-password-form">
+                            <label class="settings-field">Current password<input type="password" name="current_password" autocomplete="current-password" required></label>
+                            <label class="settings-field">New password<input type="password" name="new_password" autocomplete="new-password" minlength="8" required></label>
+                            <label class="settings-field">Confirm new password<input type="password" name="confirm_password" autocomplete="new-password" minlength="8" required></label>
+                            <div class="settings-form-footer"><span id="passwordSettingsStatus" role="status" aria-live="polite"></span><button type="submit" class="settings-save-button">Update password</button></div>
+                        </form>
+                    </section>
+                    <section class="settings-section security-section">
+                        <p class="section-kicker">ACCOUNT SECURITY</p>
+                        <h3>Two-factor authentication</h3>
+                        <p class="panel-description">Use an authenticator app to add a second step when you sign in.</p>
+                        <div class="settings-two-factor">
+                            <span id="twoFactorStatus">Not enabled</span>
+                            <label class="toggle-switch" aria-label="Two-factor authentication">
+                                <input type="checkbox" id="twoFactorToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </section>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <dialog id="twoFactorSetupDialog" class="message-dialog" aria-labelledby="twoFactorDialogTitle">
+        <form id="twoFactorSetupForm" class="message-form">
+            <button type="button" class="message-dialog-close" data-close-2fa aria-label="Close 2FA dialog">&times;</button>
+            <h3 id="twoFactorDialogTitle" class="message-dialog-title">Setup Two-Factor Authentication</h3>
+            <div class="message-dialog-content">
+                <p class="two-factor-intro">Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.) or enter the secret key manually.</p>
+                <div class="two-factor-qr-container">
+                    <img id="twoFactorQR" src="" alt="2FA QR Code" style="width:180px;height:180px;border:1px solid #ddd;border-radius:8px;">
+                </div>
+                <div class="form-group">
+                    <label for="twoFactorSecret">Secret Key</label>
+                    <input type="text" id="twoFactorSecret" name="secret" readonly style="font-family:monospace;font-size:12px;word-break:break-all;">
+                </div>
+                <div class="form-group">
+                    <label for="twoFactorCode">Verification Code</label>
+                    <input type="text" id="twoFactorCode" name="code" placeholder="Enter 6-digit code" maxlength="6" pattern="\d{6}" required>
+                </div>
+            </div>
+            <div id="messageStatus" class="message-status" hidden></div>
+            <div class="message-actions">
+                <button type="button" class="cancel-message" data-close-2fa>Cancel</button>
+                <button type="submit" class="send-message-btn">Verify and Enable</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="adminAccountModal" class="account-modal" aria-labelledby="adminAccountName" hidden>
+        <div class="account-modal-content">
+            <button type="button" class="account-modal-close" data-close-account aria-label="Close account menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="account-modal-header">
+                <div class="account-avatar" id="adminAccountAvatar">A</div>
+                <div class="account-info">
+                    <h3 id="adminAccountName">Admin</h3>
+                    <p id="adminAccountEmail">admin@recifix.com</p>
+                </div>
+            </div>
+            <div class="account-modal-body">
+                <button type="button" class="account-modal-item" id="adminAccountChangePassword">
+                    <span class="account-modal-label">Change password</span>
+                    <span class="account-modal-sublabel">Update your account password</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 17 16 12 9 7"></polyline>
+                    </svg>
+                </button>
+                <button type="button" class="account-modal-item logout-item" id="adminAccountLogout">
+                    <span class="account-modal-label">Log out</span>
+                    <span class="account-modal-sublabel">Sign out of your account</span>
+                </button>
+            </div>
+        </div>
+    </dialog>
+</body>
+</html>

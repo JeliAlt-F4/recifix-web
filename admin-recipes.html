@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f6f7f2">
+    <title>Recifix Admin - Recipes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/api.js" defer></script>
+    <script src="js/admin.js" defer></script>
+</head>
+<body>
+    <div class="admin-shell">
+        <aside class="sidebar">
+            <a class="brand" href="admin.html" aria-label="Recifix admin home">
+                <span class="brand-mark"><img src="images/icons/leave-logo-dashboard.svg" alt=""></span>
+                <span class="brand-copy"><strong>Recifix</strong><small>ADMIN CONSOLE</small></span>
+            </a>
+            <div class="workspace-label">WORKSPACE</div>
+            <nav class="side-nav" aria-label="Admin navigation">
+                <a class="side-link" href="admin.html"><span class="nav-icon" aria-hidden="true">⌂</span>Overview</a>
+                <a class="side-link" href="admin-members.html"><span class="nav-icon" aria-hidden="true">♙</span>Members<span class="nav-count">...</span></a>
+                <a class="side-link" href="admin-messages.html"><span class="nav-icon" aria-hidden="true">✉</span>Messages<span class="nav-dot" aria-label="Unread messages" hidden></span></a>
+                <a class="side-link active" href="admin-recipes.html"><span class="nav-icon" aria-hidden="true">▤</span>Recipes</a>
+                <a class="side-link" href="admin-settings.html"><span class="nav-icon" aria-hidden="true">⚙</span>Account Settings</a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="sidebar-admin">
+                    <span class="avatar avatar-small" id="adminAvatar">A</span>
+                    <span><strong id="adminName">Admin</strong><small id="adminRole">Administrator</small></span>
+                    <span class="online-dot" aria-label="Online"></span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong>Recipes</strong></div>
+                <div class="topbar-actions">
+                    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+                        <span aria-hidden="true"><img src="images/icons/lightmode.svg" alt=""></span>
+                    </button>
+                    <div class="account-wrap" aria-label="Administrator account">
+                        <div class="account-button">
+                            <span class="avatar">A</span>
+                            <span class="account-copy"><strong id="topAdminName">Admin</strong><small>Admin</small></span>
+                            <span class="chevron" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <section class="content-panel recipes-panel">
+                    <div class="panel-heading recipes-heading">
+                        <div><p class="section-kicker">FRESH FROM THE KITCHEN</p><h2>Recipe</h2><p class="panel-description">Browse and manage recipes shared with Recifix.</p></div>
+                        <div class="recipe-panel-actions">
+                            <label class="search-box"><span aria-hidden="true">⌕</span><span class="sr-only">Search recipes</span><input id="recipeSearch" type="search" placeholder="Search recipes..." autocomplete="off"></label>
+                            <button class="add-recipe-button" id="addRecipeButton" type="button"><span aria-hidden="true">+</span> Add recipe</button>
+                        </div>
+                    </div>
+                    <div class="recipe-table-scroll" tabindex="0" aria-label="Scrollable recipe details">
+                        <table class="recipe-table">
+                            <thead>
+                                <tr>
+                                    <th class="sticky-recipe">RECIPE</th><th>FLAVOR PROFILES</th><th>MEAL COURSE</th><th>MEAL TIME</th><th>COOKING TIME</th><th>DIFFICULTY</th><th>SERVINGS</th><th>DIETARY PREFERENCE</th><th>ALLERGENS</th><th>INGREDIENTS</th><th>STEPS</th><th class="actions-heading">ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recipesTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p class="recipe-table-hint">Scroll horizontally to view every column. Recipe actions stay visible.</p>
+                    <div class="panel-footer"><span id="recipeCountLabel"></span></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <dialog class="recipe-dialog recipe-editor-dialog" id="recipeEditorDialog" aria-labelledby="recipeEditorTitle">
+        <form id="recipeEditorForm" class="dashboard-recipe-editor">
+            <button type="button" class="recipe-modal-close editor-close" data-close-editor aria-label="Close recipe editor">&times;</button>
+            <div class="recipe-editor-hero">
+                <div class="recipe-editor-image-wrap">
+                    <img id="recipeEditorImagePreview" src="images/intro-image.jpg" alt="Recipe image preview">
+                    <span>RECIPE PHOTO</span>
+                </div>
+                <div class="recipe-editor-hero-copy">
+                    <div class="recipe-editor-badges"><span>RECIFIX ADMIN</span><span>RECIPE EDITOR</span></div>
+                    <h2 id="recipeEditorTitle">Add a recipe</h2>
+                    <p>Add the details for your recipe below.</p>
+                </div>
+            </div>
+            <div class="recipe-editor-body">
+                <section class="recipe-editor-section">
+                    <p class="recipe-dialog-kicker">THE DETAILS</p>
+                    <h3>Recipe information</h3>
+                    <div class="recipe-editor-grid">
+                        <label class="editor-field editor-field-wide">Recipe name<input name="name" type="text" required maxlength="100" placeholder="e.g. Chicken Adobo"></label>
+                        <label class="editor-field editor-field-wide">Image path or URL<input name="image" type="text" maxlength="500" placeholder="images/adobo.jpg"></label>
+                        <label class="editor-field editor-field-wide">Short description<textarea name="description" rows="2" required maxlength="240" placeholder="Describe the dish in a sentence."></textarea></label>
+                        <label class="editor-field">Flavor profiles<input name="flavors" type="text" placeholder="Savory, Tangy"></label>
+                        <label class="editor-field">Meal course<input name="course" type="text" required placeholder="Main course"></label>
+                        <label class="editor-field">Meal time<input name="mealTime" type="text" required placeholder="Lunch, Dinner"></label>
+                        <label class="editor-field">Cooking time <span>1 minute to 24 hours; e.g., 45 min or 1 hour 30 min</span><input name="cookingTime" type="text" maxlength="60" placeholder="45 min"></label>
+                        <label class="editor-field">Difficulty<select name="difficulty" required><option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option></select></label>
+                        <label class="editor-field">Serving<input name="servings" type="text" required placeholder="4 servings"></label>
+                        <label class="editor-field">Dietary preference<input name="dietary" type="text" placeholder="Vegetarian, Dairy-free"></label>
+                        <label class="editor-field">Allergens<input name="allergens" type="text" placeholder="Soy, Dairy"></label>
+                    </div>
+                </section>
+                <section class="recipe-editor-section">
+                    <p class="recipe-dialog-kicker">FROM PREP TO PLATE</p>
+                    <h3>Ingredients & steps</h3>
+                    <div class="recipe-editor-grid">
+                        <label class="editor-field editor-field-wide">Ingredients <span>One ingredient per line</span><textarea name="ingredients" rows="5" required placeholder="500 g chicken thighs&#10;60 ml soy sauce&#10;4 garlic cloves"></textarea></label>
+                        <label class="editor-field editor-field-wide">Cooking steps <span>One step per line</span><textarea name="steps" rows="5" required placeholder="Combine the ingredients.&#10;Simmer until tender.&#10;Serve warm."></textarea></label>
+                    </div>
+                </section>
+                <div class="recipe-editor-footer">
+                    <div><button class="editor-cancel" type="button" data-close-editor>Cancel</button><button class="editor-save" type="submit">Save recipe</button></div>
+                </div>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="adminAccountModal" class="account-modal" aria-labelledby="adminAccountName" hidden>
+        <div class="account-modal-content">
+            <button type="button" class="account-modal-close" data-close-account aria-label="Close account menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="account-modal-header">
+                <div class="account-avatar" id="adminAccountAvatar">A</div>
+                <div class="account-info">
+                    <h3 id="adminAccountName">Admin</h3>
+                    <p id="adminAccountEmail">admin@recifix.com</p>
+                </div>
+            </div>
+            <div class="account-modal-body">
+                <button type="button" class="account-modal-item" id="adminAccountChangePassword">
+                    <span class="account-modal-label">Change password</span>
+                    <span class="account-modal-sublabel">Update your account password</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 17 16 12 9 7"></polyline>
+                    </svg>
+                </button>
+                <button type="button" class="account-modal-item logout-item" id="adminAccountLogout">
+                    <span class="account-modal-label">Log out</span>
+                    <span class="account-modal-sublabel">Sign out of your account</span>
+                </button>
+            </div>
+        </div>
+    </dialog>
+</body>
+</html>
